@@ -333,9 +333,6 @@ async def async_request_openai_completions(
     if pbar:
         pbar.update(1)
     output.output_tokens = token_count
-    print(f'*********** output from async_request_openai_completions: {output}')
-    print(f'*********** output.generated_text: {output.generated_text}')
-    print(f'*********** output.output_tokens: {output.output_tokens}')
     return output
 
 
