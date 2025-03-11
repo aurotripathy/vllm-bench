@@ -219,7 +219,6 @@ def sample_sonnet_requests(
                                 random.choices(poem_lines, k=num_lines_needed))
 
         prompt = f"{base_prompt}{sampled_lines}"
-        print(f'********************* prompt: {prompt}')
         message = [
             {
                 "role": "user",
@@ -228,7 +227,6 @@ def sample_sonnet_requests(
         ]
         prompt_formatted = tokenizer.apply_chat_template(
             message, add_generation_prompt=True, tokenize=False)
-        print(f'********************* prompt_formatted: {prompt_formatted}')
         prompt_len = len(tokenizer(prompt_formatted).input_ids)
         sampled_requests.append(
             (prompt, prompt_formatted, prompt_len, output_len, None))
@@ -467,7 +465,6 @@ def calculate_metrics(
     for i in range(len(outputs)):
         if outputs[i].success:
             output_len = outputs[i].output_tokens
-            print(f'********************* outputs[i].output_tokens: {outputs[i].output_tokens}')
             if output_len is None:
                 # We use the tokenizer to count the number of output tokens
                 # for some serving backends instead of looking at
@@ -477,7 +474,6 @@ def calculate_metrics(
                 output_len = len(
                     tokenizer(outputs[i].generated_text,
                               add_special_tokens=False).input_ids)
-                print(f'********************* calculated output_len: {output_len}')
             actual_output_lens.append(output_len)
             total_input += input_requests[i][1]
             tpot = 0
@@ -701,7 +697,6 @@ async def benchmark(
 
     benchmark_duration = time.perf_counter() - benchmark_start_time
 
-    print(f'*** outputs right before calculate_metrics: {outputs}')
     metrics, actual_output_lens = calculate_metrics(
         input_requests=input_requests,
         outputs=outputs,
@@ -711,7 +706,6 @@ async def benchmark(
         selected_percentiles=selected_percentiles,
         goodput_config_dict=goodput_config_dict,
     )
-    print(f'*** metrics right after calculate_metrics: {metrics}')
 
     print("{s:{c}^{n}}".format(s=' Serving Benchmark Result ', n=50, c='='))
     print("{:<40} {:<10}".format("Successful requests:", metrics.completed))
