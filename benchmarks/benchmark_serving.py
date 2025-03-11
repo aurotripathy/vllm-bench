@@ -219,6 +219,7 @@ def sample_sonnet_requests(
                                 random.choices(poem_lines, k=num_lines_needed))
 
         prompt = f"{base_prompt}{sampled_lines}"
+        print(f'********************* prompt: {prompt}')
         message = [
             {
                 "role": "user",
@@ -227,6 +228,7 @@ def sample_sonnet_requests(
         ]
         prompt_formatted = tokenizer.apply_chat_template(
             message, add_generation_prompt=True, tokenize=False)
+        print(f'********************* prompt_formatted: {prompt_formatted}')
         prompt_len = len(tokenizer(prompt_formatted).input_ids)
         sampled_requests.append(
             (prompt, prompt_formatted, prompt_len, output_len, None))
