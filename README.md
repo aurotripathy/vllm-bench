@@ -1,8 +1,9 @@
+## Intro
 This repo contains only the files that were changed from
 
 the original benchmark (at https://github.com/vllm-project/vllm/blob/main/benchmarks/benchmark_serving.py) to make it work with RNGD Releaese 2025.1
 
-Also contains a fre additional Python and shell scripts to run them.
+Also contains  additional Python and shell scripts to run them.
 
 # Releasing vLLM
 
