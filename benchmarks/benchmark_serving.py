@@ -1010,11 +1010,12 @@ def main(args: argparse.Namespace):
         base_model_id = model_id.split("/")[-1]
         max_concurrency_str = (f"-concurrency{args.max_concurrency}"
                                if args.max_concurrency is not None else "")
-        file_name = f"{backend}-{args.request_rate}qps{max_concurrency_str}-{base_model_id}-{current_dt}.json"  #noqa
+        file_name = f"{backend}-{args.request_rate}qps-itkns-{args.sonnet_input_len}-otkns-{args.sonnet_output_len}{max_concurrency_str}-{base_model_id}-{current_dt}.json"  #noqa
         if args.result_filename:
             file_name = args.result_filename
         if args.result_dir:
             file_name = os.path.join(args.result_dir, file_name)
+        print(f"Saving results to {file_name}")
         with open(file_name, "w", encoding='utf-8') as outfile:
             json.dump(result_json, outfile)
         save_to_pytorch_benchmark_format(args, result_json, file_name)
