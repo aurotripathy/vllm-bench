@@ -14,7 +14,7 @@ def run_benchmark_with_params(input_len, output_len, concurrency, num_prompts):
         "--tokenizer", "meta-llama/Meta-Llama-3-8B-Instruct",
         "--model", "Meta-Llama-3-8B-Instruct",
         "--save-result",
-        "--result-dir", "./results",
+        "--result-dir", "./results-6i-1o-ratio",
         "--dataset-name", "sonnet",
         "--dataset-path", "benchmarks/sonnet.txt",
         "--sonnet-input-len", str(input_len),
@@ -36,12 +36,13 @@ def run_benchmark_with_params(input_len, output_len, concurrency, num_prompts):
 def run_benchmark():
     # Define paired input and output lengths
     length_pairs = [
-        (512, 256),
-        # (1024, 512)
+        # (512, 80),
+        # (1024, 170),
+        (1024+64, 170),
     ]
-    # concurrency_levels = [1, 2, 4, 8]
-    concurrency_levels = [16, 32, 64, 128, 256]
-    # concurrency_levels = [256]
+    concurrency_levels = [1,]
+    # concurrency_levels = [1, 2, 4, 8, 16, 32, 64, 128, 256]
+    # concurrency_levels = [16, 32, 64, 128, 256]
     num_prompts_levels = [100]
     
     # Run benchmarks for all combinations
