@@ -49,53 +49,14 @@ def analyze_and_present_results(results_dir):
     # Sort DataFrame by concurrency only (as integer)
     df = df.sort_values('concurrency')
     
-    # Create pivot tables for each metric
-    metrics = ['mean_ttft_ms', 'mean_tpot_ms', 'mean_itl_ms', 'output_throughput']
-    pivot_tables = {}
-    
-    for metric in metrics:
-        pivot = pd.pivot_table(
-            df,
-            values=metric,
-            index=['total_input_tokens', 'total_output_tokens'],
-            columns='concurrency',
-            aggfunc='mean'
-        )
-        # Round values in pivot table
-        pivot = pivot.round(2)
-        pivot_tables[metric] = pivot
-    
     # Create output filename using directory name
     dir_name = os.path.basename(os.path.normpath(results_dir))
     output_file = f"{dir_name}_benchmark_results.xlsx"
     
     # Create Excel writer object
     with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
-        # Write raw data first
+        # Write only the raw data
         df.to_excel(writer, sheet_name='Raw Data', index=False, float_format="%.2f")
-        
-        # Write pivot tables
-        for metric, pivot in pivot_tables.items():
-            sheet_name = metric.replace('mean_', '').replace('_ms', '')
-            pivot.to_excel(writer, sheet_name=sheet_name, float_format="%.2f")
-            
-            # Auto-adjust columns width
-            worksheet = writer.sheets[sheet_name]
-            for idx, col in enumerate(pivot.columns):
-                # Get the maximum length in the column
-                max_length = max(
-                    pivot[col].astype(str).apply(len).max(),
-                    len(str(col))
-                )
-                # Get the column letter
-                column_letter = get_column_letter(idx + 2)  # +2 because of index column
-                # Set the column width
-                worksheet.column_dimensions[column_letter].width = max_length + 2
-            
-            # Adjust the first column (index)
-            worksheet.column_dimensions['A'].width = max(
-                len(str(idx)) for idx in pivot.index
-            ) + 2
         
         # Auto-adjust Raw Data sheet
         worksheet = writer.sheets['Raw Data']
