@@ -24,9 +24,6 @@ def analyze_and_present_results(results_dir):
         with open(json_file, 'r') as f:
             data = json.load(f)
             
-            # Calculate output throughput (tokens per second)
-            output_throughput = (data['total_output_tokens'] * 1000) / data['mean_tpot_ms']
-            
             # Calculate token ratio (input/output)
             token_ratio = round(data['total_input_tokens'] / data['total_output_tokens'], 2)
             
@@ -69,22 +66,6 @@ def analyze_and_present_results(results_dir):
             worksheet.column_dimensions[column_letter].width = max_length + 2
     
     print(f"Results have been written to {output_file}")
-
-    # Create summary statistics
-    print("\nSummary Statistics:")
-    print("-" * 50)
-    for input_tokens in df['total_input_tokens'].unique():
-        for output_tokens in df[df['total_input_tokens'] == input_tokens]['total_output_tokens'].unique():
-            subset = df[
-                (df['total_input_tokens'] == input_tokens) & 
-                (df['total_output_tokens'] == output_tokens)
-            ]
-            print(f"\nInput Tokens: {input_tokens}, Output Tokens: {output_tokens}")
-            print(f"Average TTFT: {subset['mean_ttft_ms'].mean():.2f} ms")
-            print(f"Average TPOT: {subset['mean_tpot_ms'].mean():.2f} ms")
-            print(f"Average ITL: {subset['mean_itl_ms'].mean():.2f} ms")
-            print(f"Average Output Throughput: {subset['output_throughput'].mean():.2f} tokens/sec")
-            print(f"Min/Max Concurrency: {subset['concurrency'].min()}/{subset['concurrency'].max()}")
 
 def main():
     parser = argparse.ArgumentParser(description='Analyze benchmark results from a specified directory')
