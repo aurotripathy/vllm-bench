@@ -8,8 +8,8 @@ python benchmarks/pure_client_benchmark_serving.py \
        --backend openai \
        --endpoint /v1/completions \
        --request-rate 10 \
-       --tokenizer meta-llama/Meta-Llama-3-8B-Instruct \
-       --model Meta-Llama-3-8B-Instruct \
+       --tokenizer meta-llama/Llama-3.1-8B-Instruct \
+       --model meta-llama/Llama-3.1-8B-Instruct \
        --save-result \
        --result-dir ./results \
        --dataset-name sonnet \
