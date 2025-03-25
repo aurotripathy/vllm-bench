@@ -103,7 +103,7 @@ async def main(prompt):
     # print(f'Prompt:\n {prompt}')
     # print(f'\n\nPrompt length (in characters): {len(prompt)}')
     async_response = await client.completions.create(
-        model="EMPTY",
+        model="meta-llama/Llama-3.1-8B-Instruct",
         prompt=prompt,
         max_tokens=1500,
         temperature=1.0,
@@ -114,8 +114,9 @@ async def main(prompt):
     output_tokens_count = 0
     gen_tokens = []
     async for chunk in async_response:
-        gen_tokens.append(chunk.choices[0].text)
-        output_tokens_count += 1
+        if chunk.choices:
+            gen_tokens.append(chunk.choices[0].text)
+            output_tokens_count += 1
         if chunk.usage is not None:
             print(f'usage: {chunk.usage}')
     print(f"Input tokens count: {num_input_tokens}")  
