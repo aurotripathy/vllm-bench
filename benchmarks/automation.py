@@ -1,3 +1,9 @@
+"""
+This script automates vLLM benchmark testing for LLaMA models (8B and 70B) by running various configurations 
+of input/output token ratios (2:1, 3:1, 6:1) and concurrency levels (1-128, in powers of 2). It creates a dated results 
+directory, runs benchmarks using the sonnet dataset, and saves the results in JSON format for each configuration.
+"""
+
 # automate
 from datetime import datetime
 import subprocess
