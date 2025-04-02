@@ -67,11 +67,14 @@ def run_benchmark(model_size):
         # 2: 1 ratio
         (1024, 512),
         (512, 256),
+        # 3: 1 ratio
+        (1024, 341),
+        (512, 170),
         # 6: 1 ratio
         (1024, 170),
         (512, 85)
     ]
-    concurrency_levels = [1, 2, 4, 8, 16, 32, 64, 128, 256]
+    concurrency_levels = [1, 2, 4, 8, 16, 32, 64, 128,]
     num_prompts_levels = [100]
     
     # Run benchmarks for all combinations
