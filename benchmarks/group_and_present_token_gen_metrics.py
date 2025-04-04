@@ -12,6 +12,8 @@ import json
 import pandas as pd
 import argparse
 from collections import defaultdict
+import openpyxl.styles
+from datetime import datetime
 
 def extract_metrics_from_json(json_file):
     with open(json_file, 'r') as f:
@@ -75,6 +77,16 @@ def create_metrics_dataframe(file_groups, concurrency):
     # Create DataFrame with metrics as rows and token patterns as columns
     df = pd.DataFrame(index=metrics)
     
+    # Mapping of original patterns to display names
+    pattern_display_names = {
+        'itkns-1024-otkns-170': 'in 1024 : out 170',
+        'itkns-1024-otkns-341': 'in 1024 : out 341',
+        'itkns-1024-otkns-512': 'in 1024 : out 512',
+        'itkns-512-otkns-170': 'in 512 : out 170',
+        'itkns-512-otkns-256': 'in 512 : out 256',
+        'itkns-512-otkns-85': 'in 512 : out 85'
+    }
+    
     # Extract metrics for each token pattern
     for pattern, files in file_groups.items():
         # Find file with matching concurrency
@@ -82,8 +94,8 @@ def create_metrics_dataframe(file_groups, concurrency):
         if matching_file:
             print(f"Found matching file: {matching_file}")
             metrics_data = extract_metrics_from_json(matching_file)
-            # Format values to two decimal places
-            df[pattern] = [round(metrics_data[metric], 2) for metric in metrics]
+            # Format values to two decimal places and use display name for column
+            df[pattern_display_names[pattern]] = [round(metrics_data[metric], 2) for metric in metrics]
     
     return df
 
@@ -106,7 +118,8 @@ def main():
             print(f"    {file}")
     
     # Create Excel writer
-    output_file = os.path.join(args.folder_path, '2-to-1_3-to-1_6-to-1_metrics_comparison.xlsx')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = os.path.join(args.folder_path, f'2-to-1_3-to-1_6-to-1_metrics_comparison_{timestamp}.xlsx')
     writer = pd.ExcelWriter(output_file, engine='openpyxl')
     
     # Create a sheet for each concurrency
@@ -114,6 +127,27 @@ def main():
     for concurrency in concurrencies:
         df = create_metrics_dataframe(file_groups, concurrency)
         df.to_excel(writer, sheet_name=f'concurrency={concurrency}')
+        
+        # Get the worksheet
+        worksheet = writer.sheets[f'concurrency={concurrency}']
+        
+        # Add concurrency value in cell A1
+        worksheet.cell(row=1, column=1, value=f'Concurrency = {concurrency}')
+        
+        # Set column widths
+        worksheet.column_dimensions['A'].width = 25  # Metric names column
+        for col in range(2, len(df.columns) + 2):  # Data columns
+            worksheet.column_dimensions[chr(64 + col)].width = 40
+            
+        # Set row heights
+        worksheet.row_dimensions[1].height = 40  # Header row
+        for row in range(2, len(df.index) + 2):  # Data rows
+            worksheet.row_dimensions[row].height = 20
+            
+        # Enable text wrapping for header cells
+        for col in range(1, len(df.columns) + 2):
+            cell = worksheet.cell(row=1, column=col)
+            cell.alignment = openpyxl.styles.Alignment(wrap_text=True, vertical='center')
     
     # Save the Excel file
     writer.close()
