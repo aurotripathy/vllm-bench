@@ -14,6 +14,7 @@ import argparse
 from collections import defaultdict
 import openpyxl.styles
 from datetime import datetime
+from utils.plot_utils import plot_output_throughput
 
 def extract_metrics_from_json(json_file):
     with open(json_file, 'r') as f:
@@ -123,10 +124,12 @@ def main():
     writer = pd.ExcelWriter(output_file, engine='openpyxl')
     
     # Create a sheet for each concurrency
+    dataframes = {}
     concurrencies = [1, 2, 4, 8, 16, 32, 64, 128]
     for concurrency in concurrencies:
         df = create_metrics_dataframe(file_groups, concurrency)
         df.to_excel(writer, sheet_name=f'concurrency={concurrency}')
+        dataframes[concurrency] = df
         
         # Get the worksheet
         worksheet = writer.sheets[f'concurrency={concurrency}']
@@ -137,7 +140,7 @@ def main():
         # Set column widths
         worksheet.column_dimensions['A'].width = 25  # Metric names column
         for col in range(2, len(df.columns) + 2):  # Data columns
-            worksheet.column_dimensions[chr(64 + col)].width = 40
+            worksheet.column_dimensions[chr(64 + col)].width = 20
             
         # Set row heights
         worksheet.row_dimensions[1].height = 40  # Header row
@@ -152,6 +155,11 @@ def main():
     # Save the Excel file
     writer.close()
     print(f"\nMetrics comparison saved to: {output_file}")
+    
+    # Create and save the throughput plot as a separate PNG file
+    plot_file = os.path.join(args.folder_path, f'throughput_plot_{timestamp}.png')
+    plot_output_throughput(dataframes, plot_file)
+    print(f"\nThroughput plot saved to: {plot_file}")
 
 if __name__ == "__main__":
     main() 
