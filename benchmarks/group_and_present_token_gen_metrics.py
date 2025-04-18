@@ -14,7 +14,7 @@ import argparse
 from collections import defaultdict
 import openpyxl.styles
 from datetime import datetime
-from utils.plot_utils import plot_output_throughput
+from utils.plot_utils import plot_output_throughput, plot_mean_ttft
 
 def extract_metrics_from_json(json_file):
     with open(json_file, 'r') as f:
@@ -160,6 +160,11 @@ def main():
     plot_file = os.path.join(args.folder_path, f'throughput_plot_{timestamp}.png')
     plot_output_throughput(dataframes, plot_file)
     print(f"\nThroughput plot saved to: {plot_file}")
+    
+    # Create and save the TTFT plot as a separate PNG file
+    ttft_plot_file = os.path.join(args.folder_path, f'ttft_plot_{timestamp}.png')
+    plot_mean_ttft(dataframes, ttft_plot_file)
+    print(f"\nTTFT plot saved to: {ttft_plot_file}")
 
 if __name__ == "__main__":
     main() 
