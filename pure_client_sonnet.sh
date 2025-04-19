@@ -2,6 +2,9 @@
 # note the server script 
 # furiosa-llm serve ./Llama-3.1-8B-Instruct-FP8 --devices "npu:0" --enable-auto-tool-choice --tool-call-parser llama3_json --chat-template chat-template.txt -tp 8
 
+# use this as a test run on NVDA HW
+# use  this for FP16 --model meta-llama/Llama-3.1-8B-Instruct \
+
 python benchmarks/pure_client_benchmark_serving.py \
        --host localhost \
        --port 8000 \
@@ -9,7 +12,7 @@ python benchmarks/pure_client_benchmark_serving.py \
        --endpoint /v1/completions \
        --request-rate 10 \
        --tokenizer meta-llama/Llama-3.1-8B-Instruct \
-       --model meta-llama/Llama-3.1-8B-Instruct \
+       --model RedHatAI/Meta-Llama-3.1-8B-Instruct-FP8 \
        --save-result \
        --result-dir ./results \
        --dataset-name sonnet \
